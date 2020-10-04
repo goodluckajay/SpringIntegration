@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-5.2.xsd">
+
+<int:gateway service-interface="com.syne.PrinterGateway" default-request-channel="inputChannel"></int:gateway>
+
+<int:channel id="inputChannel"></int:channel>
+<int:channel id="outputChannel"></int:channel>
+<int:channel id="agChannel"></int:channel>
+
+<int:splitter ref="customSplitter" input-channel="inputChannel" output-channel="agChannel"></int:splitter>
+
+
+<bean id="customSplitter" class="com.syne.CustomSplitter"></bean>
+
+<int:aggregator input-channel="agChannel" output-channel="outputChannel"></int:aggregator>
+
+<bean id="printService" class="com.syne.PrintService" />
+
+<!-- Service Activator connect the bean to the channel -->
+<int:service-activator ref="printService" method="print" input-channel="outputChannel"></int:service-activator>
+
+
+
+</beans>
