@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-5.2.xsd">
+
+<int:channel id="messageChannel">
+	<int:dispatcher failover="true" /> <!-- Remove this attribute and check the output -->
+</int:channel>
+
+<bean id="printService" class="com.syne.PrintService" />
+<bean id="upperCasePrintService" class="com.syne.UpperCasePrintService" />
+
+<int:gateway service-interface="com.syne.PrinterGateway" default-request-channel="messageChannel"></int:gateway>
+
+<!-- Service Activator connect the bean to the channel -->
+<int:service-activator ref="printService" method="print" input-channel="messageChannel"></int:service-activator>
+
+
+<!-- Service Activator connect the bean to the channel -->
+<int:service-activator ref="upperCasePrintService" method="print" input-channel="messageChannel"></int:service-activator>
+
+
+
+</beans>
